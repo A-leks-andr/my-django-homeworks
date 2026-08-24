@@ -36,4 +36,4 @@ def workdir_view(request):
     work_dir = os.getcwd()
     files = os.listdir(work_dir)
     files_text = '<br>'.join(f"- {file}" for file in files)
-    return HttpResponse(f"Файлы в директории {work_dir}: <br><br>{files_text}")
+    return HttpResponse(f"Файлы в рабочей директории: <br><br>{files_text}")
