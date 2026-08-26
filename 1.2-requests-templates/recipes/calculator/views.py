@@ -28,3 +28,26 @@ DATA = {
 #     'ингредиент2': количество2,
 #   }
 # }
+
+def omlet_view(request):
+    amount = int(request.GET.get('servings', 1))
+    context = {'recipe':{}}
+    for k, v in DATA['omlet'].items():
+        context['recipe'][k] = v * amount
+    return render(request, 'calculator/index.html', context)
+
+
+def pasta_view(request):
+    amount = int(request.GET.get('servings', 1))
+    context = {'recipe':{}}
+    for k, v in DATA['pasta'].items():
+        context['recipe'][k] = v * amount
+    return render(request, 'calculator/index.html', context)
+
+
+def buter_view(request):
+    amount = int(request.GET.get('servings', 1))
+    context = {'recipe':{}}
+    for k, v in DATA['buter'].items():
+        context['recipe'][k] = v * amount
+    return render(request, 'calculator/index.html', context)
