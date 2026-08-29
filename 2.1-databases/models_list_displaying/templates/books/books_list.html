@@ -8,16 +8,40 @@
             <h1><a href="/books">Каталог</a></h1>
         </div>
         <div class="row">
+            {% for book in books %}
             <div class="book col-md-4">
-                <h2>Сияние</h2>
-                <p>Автор: Стивен Кинг</p>
-                <p>Дата публикации: 2018-09-10</p>
+                <h2><a href="{% url 'books_by_date' pub_date=book.pub_date %}">
+                    {{ book.name }}
+                    </a>
+                </h2>
+                <p>Автор: {{ book.author }}</p>
+                <p>
+                    Дата публикации: {{ book.pub_date|date:"Y-m-d" }}
+                </p>
             </div>
-            <div class="book col-md-4">
-                <h2>1984</h2>
-                <p>Автор: Джордж Оруэл</p>
-                <p>Дата публикации: 2015-03-11</p>
+            {% empty %}
+            <p>Книги не найдены</p>
+            {% endfor %}
+        </div>
+
+        <div class="row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding: 0 15px;">
+            <div>
+                <!-- Кнопка НАЗАД (Предыдущая дата) -->
+                {% if prev_date %}
+                    <a class="btn btn-outline-primary" href="{% url 'books_by_date' pub_date=prev_date %}">
+                        ← {{ prev_date|date:"Y-m-d" }}
+                    </a>
+                {% endif %}
+            </div>
+            <div>
+                <!-- Кнопка ВПЕРЕД (Следующая дата) -->
+                {% if next_date %}
+                    <a class="btn btn-outline-primary" href="{% url 'books_by_date' pub_date=next_date %}">
+                        {{ next_date|date:"Y-m-d" }} →
+                    </a>
+                {% endif %}
             </div>
         </div>
+
     </div>
 {% endblock %}
