@@ -18,3 +18,6 @@ settings_local.py
 
 ### OS specific ###
 .DS_Store
+
+### directory with images
+3.1-drf-intro/smart_home/media/
