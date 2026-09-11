@@ -74,7 +74,7 @@ class RelationshipInlineFormset(BaseInlineFormSet):
             # вызовом исключения ValidationError можно указать админке о наличие ошибки
             # таким образом объект не будет сохранен,
             # а пользователю выведется соответствующее сообщение об ошибке
-            raise ValidationError('Тут всегда ошибка')
+            raise ValidationError("Тут всегда ошибка")
         return super().clean()  # вызываем базовый код переопределяемого метода
 
 
@@ -95,9 +95,9 @@ class Article(models.Model):
     ...
 
     class Meta:
-        verbose_name = 'Статья'
-        verbose_name_plural = 'Статьи'
-        ordering = ['-published_at']
+        verbose_name = "Статья"
+        verbose_name_plural = "Статьи"
+        ordering = ["-published_at"]
 ```
 
 ## Документация по проекту

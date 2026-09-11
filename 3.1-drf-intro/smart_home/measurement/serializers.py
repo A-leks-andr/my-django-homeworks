@@ -1,19 +1,22 @@
 from rest_framework import serializers
-from .models import Sensor, Measurement
+
+from .models import Measurement, Sensor
 
 # TODO: опишите необходимые сериализаторы
 
+
 class MeasurementSerializer(serializers.ModelSerializer):
-    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M:%S", read_only=True) # type: ignore
+    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M:%S", read_only=True)  # type: ignore
+
     class Meta:
         model = Measurement
-        fields = ['sensor', 'temperature', 'created_at', 'image']
+        fields = ["sensor", "temperature", "created_at", "image"]
 
 
 class SensorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sensor
-        fields = ['id', 'name', 'description']
+        fields = ["id", "name", "description"]
 
 
 class SensorDetailSerializer(serializers.ModelSerializer):
@@ -21,4 +24,4 @@ class SensorDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sensor
-        fields = ['id', 'name', 'description', 'measurements']
+        fields = ["id", "name", "description", "measurements"]

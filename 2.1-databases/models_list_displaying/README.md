@@ -58,11 +58,11 @@
 from django.urls import path, register_converter
 from . import views, converters
 
-register_converter(converters.DateConverter, 'date')
+register_converter(converters.DateConverter, "date")
 
 urlpatterns = [
-    path('', views.books_view, name='books'),
-    path('<date:pub_date>/', views.books_view, name='books_by_date'),
+    path("", views.books_view, name="books"),
+    path("<date:pub_date>/", views.books_view, name="books_by_date"),
 ]
 ```
 
@@ -78,7 +78,7 @@ books = Book.objects.filter(pub_date=pub_date)
 from datetime import timedelta
 
 # Все уникальные даты
-dates = Book.objects.values_list('pub_date', flat=True).distinct().order_by('pub_date')
+dates = Book.objects.values_list("pub_date", flat=True).distinct().order_by("pub_date")
 
 # Текущая дата
 current_date = pub_date

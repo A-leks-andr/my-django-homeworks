@@ -99,8 +99,8 @@ python manage.py import_phones
 ```python
 import csv
 
-with open('phones.csv', 'r') as file:
-    phones = list(csv.DictReader(file, delimiter=';'))
+with open("phones.csv", "r") as file:
+    phones = list(csv.DictReader(file, delimiter=";"))
 ```
 
 ### Для генерации slug
@@ -118,14 +118,14 @@ slug = slugify(phone_name)
 Получите параметр из `request.GET`:
 
 ```python
-sort_param = request.GET.get('sort')
+sort_param = request.GET.get("sort")
 
-if sort_param == 'name':
-    phones = Phone.objects.all().order_by('name')
-elif sort_param == 'min_price':
-    phones = Phone.objects.all().order_by('price')
-elif sort_param == 'max_price':
-    phones = Phone.objects.all().order_by('-price')
+if sort_param == "name":
+    phones = Phone.objects.all().order_by("name")
+elif sort_param == "min_price":
+    phones = Phone.objects.all().order_by("price")
+elif sort_param == "max_price":
+    phones = Phone.objects.all().order_by("-price")
 else:
     phones = Phone.objects.all()
 ```

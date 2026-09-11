@@ -278,16 +278,20 @@ def api_client():
 @pytest.fixture
 def course_factory():
     """Фикстура для создания курсов"""
+
     def factory(**kwargs):
-        return baker.make('students.Course', **kwargs)
+        return baker.make("students.Course", **kwargs)
+
     return factory
 
 
 @pytest.fixture
 def student_factory():
     """Фикстура для создания студентов"""
+
     def factory(**kwargs):
-        return baker.make('students.Student', **kwargs)
+        return baker.make("students.Student", **kwargs)
+
     return factory
 ```
 

@@ -2,7 +2,6 @@ from django.db import models
 
 
 class Student(models.Model):
-
     name = models.TextField()
 
     birth_date = models.DateField(
@@ -11,7 +10,6 @@ class Student(models.Model):
 
 
 class Course(models.Model):
-
     name = models.TextField()
 
     students = models.ManyToManyField(

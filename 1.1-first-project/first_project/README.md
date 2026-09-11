@@ -48,12 +48,12 @@ http://127.0.0.1:8000/convert/?from=USD&to=RUB&amount=10
 3. Использовать фиксированный словарь с курсами валют, заданный в `views.py`:
    ```python
    EXCHANGE_RATES = {
-       'USD_RUB': 90.5,
-       'EUR_RUB': 98.0,
-       'USD_EUR': 0.92,
-       'EUR_USD': 1.09,
-       'RUB_USD': 0.011,
-       'RUB_EUR': 0.010,
+       "USD_RUB": 90.5,
+       "EUR_RUB": 98.0,
+       "USD_EUR": 0.92,
+       "EUR_USD": 1.09,
+       "RUB_USD": 0.011,
+       "RUB_EUR": 0.010,
    }
    ```
 4. Если курс для указанной пары существует, вернуть результат:
