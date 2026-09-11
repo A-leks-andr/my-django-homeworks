@@ -1,6 +1,8 @@
 # примеры API-запросов
+# token1 61fafea9cc4744964bc0926df44b8fde90f7804e
+# token2 7316d3244a4552e4f821a097410c049ceb1b0f05
 
-@baseUrl = https://localhost:8000/api
+@baseUrl = http://localhost:8000/api
 
 # получение объявлений
 GET {{baseUrl}}/advertisements/
@@ -8,35 +10,68 @@ Content-Type: application/json
 
 ###
 
-# создание объявления
+# создание объявления 1
 POST {{baseUrl}}/advertisements/
 Content-Type: application/json
-Authorization: Token 902ef055a9ac93f18327f1f9c45ab059f1a62c7d
+Authorization: Token 61fafea9cc4744964bc0926df44b8fde90f7804e
 
 {
-  "title": "Шкаф IKEA",
-  "description": "Срочно"
+  "title": "Черновик",
+  "description": "Срочно",
+  "status": "DRAFT"
+}
+
+###
+
+# создание объявления 2
+POST {{baseUrl}}/advertisements/
+Content-Type: application/json
+Authorization: Token 7316d3244a4552e4f821a097410c049ceb1b0f05
+
+{
+  "title": "Черновик 2",
+  "description": "в хорошем состоянии",
+  "status": "DRAFT"
 }
 
 ###
 
 # попытка поменять объявление
-PATCH {{baseUrl}}/advertisements/1/
+PATCH {{baseUrl}}/advertisements/8/
 Content-Type: application/json
-Authorization: Token 902ef055a9ac93f18327f1f9c45ab059f1a62c7d
+Authorization: Token 7316d3244a4552e4f821a097410c049ceb1b0f05
 
 {
-  "status": "CLOSED"
+  "title": "Кровать этюд 3"
 }
 
 ###
 
 # фильтрация по создателю
-GET {{baseUrl}}/advertisements/?creator=3
+GET {{baseUrl}}/advertisements/?creator=2
+Content-Type: application/json
+Authorization: Token 61fafea9cc4744964bc0926df44b8fde90f7804e
+
+###
+
+# фильтрация по статусу
+GET {{baseUrl}}/advertisements/?status=CLOSED
 Content-Type: application/json
 
 ###
 
 # фильтрация по дате
-GET {{baseUrl}}/advertisements/?created_at_before=2020-10-01
+GET {{baseUrl}}/advertisements/?created_at_before=2026-09-11
 Content-Type: application/json
+
+###
+
+# удаление от пользователя 1
+DELETE {{baseUrl}}/advertisements/6/
+Authorization: Token 61fafea9cc4744964bc0926df44b8fde90f7804e
+
+###
+
+# удаление от пользователя 2
+DELETE {{baseUrl}}/advertisements/6/
+Authorization: Token 7316d3244a4552e4f821a097410c049ceb1b0f05
