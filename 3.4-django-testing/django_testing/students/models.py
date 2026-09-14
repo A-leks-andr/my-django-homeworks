@@ -8,6 +8,9 @@ class Student(models.Model):
         null=True,
     )
 
+    def __str__(self) -> str:
+        return f"Студент {self.name}, {self.birth_date} года рождения"
+
 
 class Course(models.Model):
     name = models.TextField()
@@ -16,3 +19,6 @@ class Course(models.Model):
         Student,
         blank=True,
     )
+
+    def __str__(self) -> str:
+        return f"Курс {self.name}"
