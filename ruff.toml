@@ -12,3 +12,15 @@ ignore = []
 "**/migrations/*" = ["E501", "F401"]
 "__init__.py" = ["F401"]
 "**/settings.py" = ["F403", "F405", "E501"]
+"**/asgi.py" = ["F403", "F405", "E501"]
+"**/wsgi.py" = ["F403", "F405", "E501"]
+"**/manage.py" = ["F403", "F405", "E501"]
+
+[format]
+exclude = [
+    "**/migrations/*",
+    "**/settings.py",
+    "**/asgi.py",
+    "**/wsgi.py",
+    "**/manage.py"
+]
