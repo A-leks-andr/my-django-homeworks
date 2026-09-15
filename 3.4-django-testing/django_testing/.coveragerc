@@ -1,0 +1,8 @@
+[run]
+omit =
+    django_testing/asgi.py
+    django_testing/wsgi.py
+    manage.py
+    **/__init__.py
+    **/migrations/*
+    tests/*
