@@ -15,6 +15,14 @@ EXCHANGE_RATES = {
 }
 
 
+def is_numeric(string_value: str) -> bool:
+    try:
+        float(string_value)
+        return True
+    except (ValueError, TypeError):
+        return False
+
+
 def home_view(request):
     template_name = "app/home.html"
     # впишите правильные адреса страниц, используя
@@ -70,13 +78,14 @@ def about_view(request):
     convert_url = reverse("convert")
     back = f'Вернуться на <a href="{home_url}">главная</a> страницу'
     msg = (
-        f"О проекте:<br><br>"
-        f"Это простое веб-приложение для конвертации валют.<br>"
-        f"Как пользоваться:<br>"
-        f"1. Перейдите на страницу <a href={convert_url}>/convert/</a><br>"
-        f"2. Добавьте параметры в URL:<br>"
-        f"?from=USD&to=RUB&amount=100<br>"
-        f"Доступные валюты: USD, EUR, RUB."
+        "<h2>О проекте:</h2>"
+        "<p>Это простое веб-приложение для конвертации валют.</p>"
+        "<h4>Как пользоваться:</h4>"
+        f"1. Перейдите на страницу <a href='{convert_url}'>"
+        "<code>/convert/</code></a><br>"
+        "2. Добавьте параметры в URL:<br>"
+        "<code>?from=USD&to=RUB&amount=100</code><br>"
+        "Доступные валюты: USD, EUR, RUB."
     )
 
     resp_html = f"{back}<br><br>{msg}"
@@ -93,23 +102,30 @@ def convert_view(request):
         to_currency = request.GET.get("to")
         amount = request.GET.get("amount")
 
-        curs = f"{from_currency}_{to_currency}"
-        key = [k for k in EXCHANGE_RATES.keys()]
-        if curs not in key:
-            msg = f"Курс для пары {from_currency} → {to_currency} не найден"
-
-        elif not amount.isdigit():
-            msg = f"amount {amount} не является числом"
+        if not from_currency or not to_currency or not amount:
+            msg = "Один или несколько параметров не заполнены"
 
         else:
-            result = EXCHANGE_RATES[curs] * float(amount)
-            msg = f"{amount} {from_currency} = {result:.2f} {to_currency}"
+            curs = f"{from_currency.upper()}_{to_currency.upper()}"
+
+            if curs not in EXCHANGE_RATES:
+                msg = f"Курс для пары {from_currency} → {to_currency} не найден"
+
+            elif not is_numeric(amount):
+                msg = f"amount {amount} не является корректным числом"
+
+            else:
+                result = EXCHANGE_RATES[curs] * float(amount)
+                msg = (
+                    f"{float(amount):.2f} {from_currency.upper()} = "
+                    f"{result:.2f} {to_currency.upper()}"
+                )
+
     else:
         msg = (
             "Вы перешли на страницу конвертера без параметров.<br><br>"
             "Пожалуйста, укажите параметры: from, to, amount<br><br>"
-            "Пример: /convert/?from=USD&to=RUB&amount=10"
+            "Пример: <code>/convert/?from=USD&to=RUB&amount=10</code>"
         )
-
     resp_html = f"{back}<br><br>{info}<br><br>{msg}"
     return HttpResponse(resp_html)
