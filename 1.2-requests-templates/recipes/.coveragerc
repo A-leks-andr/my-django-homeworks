@@ -1,0 +1,10 @@
+[run]
+omit =
+    **/__init__.py
+    tests/*
+    manage.py
+    recipes/asgi.py
+    recipes/wsgi.py
+    calculator/models.py
+    calculator/apps.py
+    calculator/admin.py

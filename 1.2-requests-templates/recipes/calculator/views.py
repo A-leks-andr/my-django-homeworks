@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 
 DATA = {
@@ -30,9 +31,19 @@ DATA = {
 # }
 
 
+def index_view(request):
+    response = (
+        "<h2>Список рецептов:</h2>"
+        "<h3><a href=/omlet/>Омлет</a></h3>"
+        "<h3><a href=/pasta/>Паста</a></h3>"
+        "<h3><a href=/buter/>Бутерброд</a></h3>"
+    )
+    return HttpResponse(response)
+
+
 def omlet_view(request):
     amount = int(request.GET.get("servings", 1))
-    context = {"recipe": {}}
+    context = {"name": "Омлет", "recipe": {}}
     for k, v in DATA["omlet"].items():
         context["recipe"][k] = v * amount
     return render(request, "calculator/index.html", context)
@@ -40,7 +51,7 @@ def omlet_view(request):
 
 def pasta_view(request):
     amount = int(request.GET.get("servings", 1))
-    context = {"recipe": {}}
+    context = {"name": "Паста", "recipe": {}}
     for k, v in DATA["pasta"].items():
         context["recipe"][k] = v * amount
     return render(request, "calculator/index.html", context)
@@ -48,7 +59,7 @@ def pasta_view(request):
 
 def buter_view(request):
     amount = int(request.GET.get("servings", 1))
-    context = {"recipe": {}}
+    context = {"name": "Бутерброд", "recipe": {}}
     for k, v in DATA["buter"].items():
         context["recipe"][k] = v * amount
     return render(request, "calculator/index.html", context)
