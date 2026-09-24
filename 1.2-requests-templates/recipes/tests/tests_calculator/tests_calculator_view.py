@@ -35,7 +35,7 @@ def test_omlet_view(client, get_params, expected_eggs):
         assert response.context["recipe"]["тестовое_яйцо"] == expected_eggs
 
     finally:
-        DATA.clear
+        DATA.clear()
         DATA.update(original_data)
 
 
@@ -59,7 +59,7 @@ def test_pasta_view(client, get_params, expected_cheese):
         assert response.context["recipe"]["тестовый_сыр"] == expected_cheese
 
     finally:
-        DATA.clear
+        DATA.clear()
         DATA.update(original_data)
 
 
@@ -83,5 +83,5 @@ def test_buter_view(client, get_params, expected_bread):
         assert response.context["recipe"]["тестовый_хлеб"] == expected_bread
 
     finally:
-        DATA.clear
+        DATA.clear()
         DATA.update(original_data)
