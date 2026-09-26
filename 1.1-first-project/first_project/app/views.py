@@ -1,9 +1,11 @@
+import math
 import os
 
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.html import escape
 
 EXCHANGE_RATES = {
     "USD_RUB": 84.1975,
@@ -17,18 +19,18 @@ EXCHANGE_RATES = {
 
 def is_numeric(string_value: str) -> bool:
     try:
-        float(string_value)
-        return True
+        number = float(string_value)
+
     except (ValueError, TypeError):
         return False
+
+    return math.isfinite(number)
 
 
 def home_view(request):
     template_name = "app/home.html"
-    # впишите правильные адреса страниц, используя
-    # функцию `reverse`
+
     pages = {
-        "Главная страница": reverse("home"),
         "Показать текущее время": reverse("time"),
         "Показать содержимое рабочей директории": reverse("workdir"),
         "О проекте": reverse("about"),
@@ -44,7 +46,7 @@ def time_view(request):
     home_url = reverse("home")
     local_time = timezone.localtime(timezone.now())
     formatted_time = local_time.strftime("%H:%M:%S")
-    back = f'Вернуться на <a href="{home_url}">главная</a> страницу'
+    back = f'Вернуться на <a href="{home_url}">главную</a> страницу'
     msg = f"Страница загрузилась в: {formatted_time}"
 
     msg_2 = (
@@ -65,18 +67,18 @@ def time_view(request):
 
 def workdir_view(request):
     home_url = reverse("home")
-    back = f'Вернуться на <a href="{home_url}">главная</a> страницу'
+    back = f'Вернуться на <a href="{home_url}">главную</a> страницу'
     work_dir = os.getcwd()
     files = os.listdir(work_dir)
-    files_text = "<br>".join(f"- {file}" for file in files)
-    resp_html = f"{back}<br><br>Файлы в рабоче директории:<br><br>{files_text}"
+    files_text = "<br>".join(f"- {escape(file)}" for file in files)
+    resp_html = f"{back}<h3>Файлы в рабочей директории:</h3>{files_text}"
     return HttpResponse(resp_html)
 
 
 def about_view(request):
     home_url = reverse("home")
     convert_url = reverse("convert")
-    back = f'Вернуться на <a href="{home_url}">главная</a> страницу'
+    back = f'Вернуться на <a href="{home_url}">главную</a> страницу'
     msg = (
         "<h2>О проекте:</h2>"
         "<p>Это простое веб-приложение для конвертации валют.</p>"
@@ -102,6 +104,10 @@ def convert_view(request):
         to_currency = request.GET.get("to")
         amount = request.GET.get("amount")
 
+        esc_from = escape(from_currency.upper()) if from_currency else ""
+        esc_to = escape(to_currency.upper()) if to_currency else ""
+        esc_amount = escape(amount) if amount else ""
+
         if not from_currency or not to_currency or not amount:
             msg = "Один или несколько параметров не заполнены"
 
@@ -109,17 +115,14 @@ def convert_view(request):
             curs = f"{from_currency.upper()}_{to_currency.upper()}"
 
             if curs not in EXCHANGE_RATES:
-                msg = f"Курс для пары {from_currency} → {to_currency} не найден"
+                msg = f"Курс для пары {esc_from} → {esc_to} не найден"
 
             elif not is_numeric(amount):
-                msg = f"amount {amount} не является корректным числом"
+                msg = f"amount {esc_amount} не является корректным числом"
 
             else:
                 result = EXCHANGE_RATES[curs] * float(amount)
-                msg = (
-                    f"{float(amount):.2f} {from_currency.upper()} = "
-                    f"{result:.2f} {to_currency.upper()}"
-                )
+                msg = f"{float(amount):.2f} {esc_from} = {result:.2f} {esc_to}"
 
     else:
         msg = (

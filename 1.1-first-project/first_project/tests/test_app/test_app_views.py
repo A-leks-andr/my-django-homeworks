@@ -7,7 +7,6 @@ def test_home_view(client):
     response = client.get(url)
 
     assert response.status_code == 200
-    assert reverse("home") in response.content.decode("utf-8")
     assert reverse("about") in response.content.decode("utf-8")
     assert reverse("time") in response.content.decode("utf-8")
     assert reverse("workdir") in response.content.decode("utf-8")
@@ -95,15 +94,18 @@ def test_time_view(client):
     assert "setInterval(updateTime, 1000);" in html_content
 
 
-def test_workdir_view(client):
+def test_workdir_view(client, workdir_with_malicious_file):
     url = reverse("workdir")
     response = client.get(url)
 
     assert response.status_code == 200
 
     html_content = response.content.decode("utf-8")
+    html_lower = html_content.lower()
 
     assert "manage.py" in html_content
+    assert "normal.py" in html_content
+    assert "<script>alert(1)</script>.py" not in html_lower
 
 
 def test_about_view(client):
@@ -118,6 +120,47 @@ def test_about_view(client):
     assert "Это простое веб-приложение для конвертации валют" in html_content
     assert "Доступные валюты: USD, EUR, RUB" in html_content
     assert reverse("convert") in html_content
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {"from": "<script>alert('XSS')</script>", "to": "RUB", "amount": "10"},
+        {"from": "USD", "to": "<script>alert('XSS')</script>", "amount": "10"},
+        {"from": "USD", "to": "RUB", "amount": "<script>alert('XSS')</script>"},
+    ],
+    ids=["from_param", "to_param", "amount_param"],
+)
+def test_convert_view_no_unescaped_scripts(client, payload):
+    """Пользовательские параметры не должны попадать в HTML без экранирования
+    (защита от XSS)."""
+    url = reverse("convert")
+    response = client.get(url, data=payload)
+
+    assert response.status_code == 200
+    html = response.content.decode("utf-8").lower()
+
+    # Сырой тег <script> не должен присутствовать в ответе
+    assert "<script>" not in html
+
+    # Экранированная версия (HTML-сущности) должна присутствовать
+    assert "&lt;script&gt;" in html
+
+
+@pytest.mark.parametrize(
+    "invalid_amount",
+    ["nan", "inf", "-inf", "NaN", "Infinity"],
+)
+def test_convert_view_rejects_non_finite_amount(client, invalid_amount):
+    """nan/inf не должны проходить как корректная сумма."""
+    url = reverse("convert")
+    response = client.get(
+        url, data={"from": "USD", "to": "RUB", "amount": invalid_amount}
+    )
+
+    assert response.status_code == 200
+    expected = f"amount {invalid_amount} не является корректным числом"
+    assert expected in response.content.decode("utf-8")
 
 
 # команда для проверки покрытие кода
