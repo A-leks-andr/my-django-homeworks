@@ -128,6 +128,23 @@ STATICFILES_DIRS = [
 
 BUS_STATION_CSV = os.path.join(BASE_DIR, 'data-398-2018-08-30.csv')
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        # Логгер приложения stations: вывод предупреждений в консоль.
+        'stations': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+        },
+    },
+}
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

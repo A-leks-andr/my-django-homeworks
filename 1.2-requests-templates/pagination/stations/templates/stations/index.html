@@ -21,6 +21,9 @@
 </head>
 <body>
 <div class="container">
+    {% if warning %}
+        <p style="color: #c0392b; font-weight: bold;">{{ warning }}</p>
+    {% endif %}
     <div class="row">
         <table class="u-full-width">
             <thead>
