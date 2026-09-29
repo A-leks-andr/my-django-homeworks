@@ -20,46 +20,39 @@ DATA = {
     # можете добавить свои рецепты ;)
 }
 
-# Напишите ваш обработчик. Используйте DATA как источник данных
-# Результат - render(request, 'calculator/index.html', context)
-# В качестве контекста должен быть передан словарь с рецептом:
-# context = {
-#   'recipe': {
-#     'ингредиент1': количество1,
-#     'ингредиент2': количество2,
-#   }
-# }
+# Названия рецептов для отображения в шаблоне.
+RECIPE_TITLES = {
+    "omlet": "Омлет",
+    "pasta": "Паста",
+    "buter": "Бутерброд",
+}
+
+
+def _get_servings(request):
+    try:
+        servings = int(float(request.GET.get("servings", 1)))
+    except (ValueError, TypeError):
+        servings = 1
+    return max(servings, 1)
 
 
 def index_view(request):
-    response = (
-        "<h2>Список рецептов:</h2>"
-        "<h3><a href=/omlet/>Омлет</a></h3>"
-        "<h3><a href=/pasta/>Паста</a></h3>"
-        "<h3><a href=/buter/>Бутерброд</a></h3>"
-    )
+    # View для навигации по рецептам из списка, при добавлении новых рецептов
+    # они автоматически будут отображаться в навигации
+
+    response = "<h2>Список рецептов:</h2>"
+    for k, v in RECIPE_TITLES.items():
+        response += f"<h3><a href=/{k}/>{v}</a></h3>"
     return HttpResponse(response)
 
 
-def omlet_view(request):
-    amount = int(request.GET.get("servings", 1))
-    context = {"name": "Омлет", "recipe": {}}
-    for k, v in DATA["omlet"].items():
-        context["recipe"][k] = v * amount
-    return render(request, "calculator/index.html", context)
-
-
-def pasta_view(request):
-    amount = int(request.GET.get("servings", 1))
-    context = {"name": "Паста", "recipe": {}}
-    for k, v in DATA["pasta"].items():
-        context["recipe"][k] = v * amount
-    return render(request, "calculator/index.html", context)
-
-
-def buter_view(request):
-    amount = int(request.GET.get("servings", 1))
-    context = {"name": "Бутерброд", "recipe": {}}
-    for k, v in DATA["buter"].items():
-        context["recipe"][k] = v * amount
+def recipe_view(request, name):
+    servings = _get_servings(request)
+    recipe = DATA.get(name, {})
+    context = {
+        "name": RECIPE_TITLES.get(name, name),
+        "recipe": {
+            ingredient: quantity * servings for ingredient, quantity in recipe.items()
+        },
+    }
     return render(request, "calculator/index.html", context)

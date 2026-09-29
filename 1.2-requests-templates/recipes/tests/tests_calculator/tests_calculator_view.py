@@ -1,5 +1,4 @@
 import pytest
-from calculator.views import DATA
 from django.urls import reverse
 
 
@@ -10,78 +9,53 @@ def test_index_view(client):
     assert response.status_code == 200
 
     html = response.content.decode("utf-8")
-    assert reverse("omlet") in html
-    assert reverse("pasta") in html
-    assert reverse("buter") in html
+    assert "/omlet/" in html
+    assert "/pasta/" in html
+    assert "/buter/" in html
+
+
+@pytest.mark.parametrize(
+    "recipe_name, expected_title",
+    [
+        ("omlet", "Омлет"),
+        ("pasta", "Паста"),
+        ("buter", "Бутерброд"),
+    ],
+)
+def test_name_recipe_view(client, recipe_name, expected_title):
+    url = reverse("recipe", args=[recipe_name])
+    response = client.get(url)
+
+    assert response.status_code == 200
+
+    assert response.context["name"] == expected_title
+
+
+def test_unknown_recipe_view(client):
+    url = reverse("recipe", args=["pizza"])
+    response = client.get(url)
+
+    assert response.status_code == 200
+
+    html = response.content.decode("utf-8")
+    assert "Такого рецепта не знаю :(" in html
 
 
 @pytest.mark.parametrize(
     "get_params, expected_eggs",
     [
-        ({}, 10),
-        ({"servings": 3}, 30),
-        ({"servings": 5}, 50),
+        ({}, 2),
+        ({"servings": 3}, 6),
+        ({"servings": 10}, 20),
+        ({"servings": "2.5"}, 4),
+        ({"servings": ""}, 2),
+        ({"servings": "abc"}, 2),
+        ({"servings": "-3"}, 2),
     ],
 )
-def test_omlet_view(client, get_params, expected_eggs):
-    original_data = DATA.copy()
-    DATA.clear()
-    DATA.update({"omlet": {"тестовое_яйцо": 10}})
-    try:
-        url = reverse("omlet")
-        response = client.get(url, get_params)
-        assert response.status_code == 200
-        assert response.context["name"] == "Омлет"
-        assert response.context["recipe"]["тестовое_яйцо"] == expected_eggs
+def test_recipe_servings(client, get_params, expected_eggs):
+    url = reverse("recipe", args=["omlet"])
+    response = client.get(url, get_params)
 
-    finally:
-        DATA.clear()
-        DATA.update(original_data)
-
-
-@pytest.mark.parametrize(
-    "get_params, expected_cheese",
-    [
-        ({}, 5),
-        ({"servings": 3}, 15),
-        ({"servings": 5}, 25),
-    ],
-)
-def test_pasta_view(client, get_params, expected_cheese):
-    original_data = DATA.copy()
-    DATA.clear()
-    DATA.update({"pasta": {"тестовый_сыр": 5}})
-    try:
-        url = reverse("pasta")
-        response = client.get(url, get_params)
-        assert response.status_code == 200
-        assert response.context["name"] == "Паста"
-        assert response.context["recipe"]["тестовый_сыр"] == expected_cheese
-
-    finally:
-        DATA.clear()
-        DATA.update(original_data)
-
-
-@pytest.mark.parametrize(
-    "get_params, expected_bread",
-    [
-        ({}, 1),
-        ({"servings": 3}, 3),
-        ({"servings": 5}, 5),
-    ],
-)
-def test_buter_view(client, get_params, expected_bread):
-    original_data = DATA.copy()
-    DATA.clear()
-    DATA.update({"buter": {"тестовый_хлеб": 1}})
-    try:
-        url = reverse("buter")
-        response = client.get(url, get_params)
-        assert response.status_code == 200
-        assert response.context["name"] == "Бутерброд"
-        assert response.context["recipe"]["тестовый_хлеб"] == expected_bread
-
-    finally:
-        DATA.clear()
-        DATA.update(original_data)
+    assert response.status_code == 200
+    assert response.context["recipe"]["яйца, шт"] == expected_eggs

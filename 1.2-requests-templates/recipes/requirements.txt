@@ -1,1 +1,4 @@
-django
+django>=6.1,<7
+pytest>=9,<10
+pytest-django>=4,<5
+pytest-cov
