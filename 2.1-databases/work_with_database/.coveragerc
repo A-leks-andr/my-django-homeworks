@@ -1,0 +1,9 @@
+[run]
+omit =
+    **/__init__.py
+    tests/*
+    manage.py
+    main/wsgi.py
+    phones/migrations/*
+    phones/admin.py
+    phones/apps.py
